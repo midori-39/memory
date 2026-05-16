@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>からだ神経衰弱ゲーム</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background: linear-gradient(135deg, #ffe6f0, #e0f7ff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  h1 {
+    margin-top: 20px;
+    color: #ff4f8b;
+  }
+
+  #timer {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff2d74;
+    margin-top: 10px;
+  }
+
+  #game {
+    width: 760px;
+    max-width: 95vw;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 20px;
+  }
+
+  .card {
+    aspect-ratio: 1 / 1;
+    position: relative;
+    cursor: pointer;
+    perspective: 1000px;
+  }
+
+  .inner {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+
+  .card.flipped .inner {
+    transform: rotateY(180deg);
+  }
+
+  .front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .front {
+    background: white;
+    transform: rotateY(180deg);
+    flex-direction: column;
+    font-size: 52px;
+  }
+
+  .back {
+    background: #ff7fb0;
+    color: white;
+    font-size: 42px;
+  }
+
+  .label {
+    font-size: 18px;
+    margin-top: 6px;
+  }
+
+  #message {
+    font-size: 24px;
+    color: #ff4f8b;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #ff4f8b;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  button:hover {
+    background: #ff2d74;
+  }
+
+  @media (max-width: 600px) {
+    #game {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .front {
+      font-size: 42px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>🩺 からだ神経衰弱ゲーム</h1>
+
+<div id="timer">⏰ 0 秒</div>
+
+<button onclick="startGame()">シャッフルして再スタート</button>
+
+<div id="message"></div>
+<div id="game"></div>
+
+<script>
+const organs = [
+  { emoji: "👁️", name: "目" },
+  { emoji: "🧠", name: "脳" },
+  { emoji: "🫀", name: "心臓" },
+  { emoji: "🫁", name: "肺" },
+  { emoji: "🫘", name: "腎臓" },
+  { emoji: "🌀", name: "大腸" },
+  { emoji: "🍖", name: "肝臓" },
+  { emoji: "😋", name: "胃" }
+];
+
+let cards = [];
+let flipped = [];
+let lock = false;
+let matchedCount = 0;
+
+let seconds = 0;
+let timerInterval = null;
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+
+  seconds = 0;
+  document.getElementById("timer").textContent = `⏰ ${seconds} 秒`;
+
+  timerInterval = setInterval(() => {
+    seconds++;
+    document.getElementById("timer").textContent = `⏰ ${seconds} 秒`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function startGame() {
+  const game = document.getElementById("game");
+  const message = document.getElementById("message");
+
+  game.innerHTML = "";
+  message.textContent = "";
+
+  matchedCount = 0;
+  flipped = [];
+  lock = false;
+
+  startTimer();
+
+  cards = shuffle([...organs, ...organs]);
+
+  cards.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.name = item.name;
+
+    card.innerHTML = `
+      <div class="inner">
+        <div class="front">
+          <div>${item.emoji}</div>
+          <div class="label">${item.name}</div>
+        </div>
+        <div class="back">❓</div>
+      </div>
+    `;
+
+    card.addEventListener("click", () => flipCard(card));
+    game.appendChild(card);
+  });
+}
+
+function flipCard(card) {
+  if (
+    lock ||
+    card.classList.contains("flipped") ||
+    flipped.length >= 2
+  ) return;
+
+  card.classList.add("flipped");
+  flipped.push(card);
+
+  if (flipped.length === 2) {
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  lock = true;
+
+  const [a, b] = flipped;
+
+  if (a.dataset.name === b.dataset.name) {
+    matchedCount++;
+
+    flipped = [];
+    lock = false;
+
+    if (matchedCount === organs.length) {
+      stopTimer();
+
+      document.getElementById("message").textContent =
+        `🎉 全部そろった！タイム: ${seconds} 秒`;
+    }
+
+  } else {
+    setTimeout(() => {
+      a.classList.remove("flipped");
+      b.classList.remove("flipped");
+      flipped = [];
+      lock = false;
+    }, 1000);
+  }
+}
+
+startGame();
+</script>
+
+</body>
+</html>
