@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>からだ神経衰弱ゲーム</title>
+
 <style>
   body {
     margin: 0;
@@ -28,10 +29,10 @@
   }
 
   #game {
-    width: 760px;
+    width: 900px;
     max-width: 95vw;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     margin: 20px;
   }
@@ -55,7 +56,8 @@
     transform: rotateY(180deg);
   }
 
-  .front, .back {
+  .front,
+  .back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -71,7 +73,7 @@
     background: white;
     transform: rotateY(180deg);
     flex-direction: column;
-    font-size: 52px;
+    font-size: 48px;
   }
 
   .back {
@@ -83,6 +85,7 @@
   .label {
     font-size: 18px;
     margin-top: 6px;
+    color: #555;
   }
 
   #message {
@@ -100,24 +103,25 @@
     color: white;
     font-size: 16px;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin-top: 12px;
   }
 
   button:hover {
     background: #ff2d74;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
     #game {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .front {
-      font-size: 42px;
+      font-size: 40px;
     }
   }
 </style>
 </head>
+
 <body>
 
 <h1>🩺 からだ神経衰弱ゲーム</h1>
@@ -127,18 +131,18 @@
 <button onclick="startGame()">シャッフルして再スタート</button>
 
 <div id="message"></div>
+
 <div id="game"></div>
 
 <script>
 const organs = [
   { emoji: "👁️", name: "目" },
   { emoji: "🧠", name: "脳" },
+  { emoji: "😋", name: "胃" },
   { emoji: "🫀", name: "心臓" },
-  { emoji: "🫁", name: "肺" },
   { emoji: "🫘", name: "腎臓" },
   { emoji: "🌀", name: "大腸" },
   { emoji: "🍖", name: "肝臓" },
-  { emoji: "😋", name: "胃" }
 
   // 追加
   { emoji: "👃", name: "鼻" },
@@ -164,11 +168,14 @@ function startTimer() {
   clearInterval(timerInterval);
 
   seconds = 0;
-  document.getElementById("timer").textContent = `⏰ ${seconds} 秒`;
+  document.getElementById("timer").textContent =
+    `⏰ ${seconds} 秒`;
 
   timerInterval = setInterval(() => {
     seconds++;
-    document.getElementById("timer").textContent = `⏰ ${seconds} 秒`;
+
+    document.getElementById("timer").textContent =
+      `⏰ ${seconds} 秒`;
   }, 1000);
 }
 
@@ -192,6 +199,7 @@ function startGame() {
   cards = shuffle([...organs, ...organs]);
 
   cards.forEach((item) => {
+
     const card = document.createElement("div");
     card.className = "card";
     card.dataset.name = item.name;
@@ -202,16 +210,21 @@ function startGame() {
           <div>${item.emoji}</div>
           <div class="label">${item.name}</div>
         </div>
-        <div class="back">❓</div>
+
+        <div class="back">
+          ❓
+        </div>
       </div>
     `;
 
     card.addEventListener("click", () => flipCard(card));
+
     game.appendChild(card);
   });
 }
 
 function flipCard(card) {
+
   if (
     lock ||
     card.classList.contains("flipped") ||
@@ -219,6 +232,7 @@ function flipCard(card) {
   ) return;
 
   card.classList.add("flipped");
+
   flipped.push(card);
 
   if (flipped.length === 2) {
@@ -227,29 +241,36 @@ function flipCard(card) {
 }
 
 function checkMatch() {
+
   lock = true;
 
   const [a, b] = flipped;
 
   if (a.dataset.name === b.dataset.name) {
+
     matchedCount++;
 
     flipped = [];
     lock = false;
 
     if (matchedCount === organs.length) {
+
       stopTimer();
 
       document.getElementById("message").textContent =
-        `🎉 全部そろった！タイム: ${seconds} 秒`;
+        `🎉 全部そろった！タイム：${seconds} 秒`;
     }
 
   } else {
+
     setTimeout(() => {
+
       a.classList.remove("flipped");
       b.classList.remove("flipped");
+
       flipped = [];
       lock = false;
+
     }, 1000);
   }
 }
