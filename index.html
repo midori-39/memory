@@ -8,7 +8,7 @@
 <style>
     body{
         margin:0;
-        font-family: "Arial", sans-serif;
+        font-family: Arial, sans-serif;
         background: linear-gradient(to bottom, #bfefff, #dff7ff);
         display:flex;
         flex-direction:column;
@@ -105,6 +105,34 @@
         background:#39b8f0;
         transform:scale(1.05);
     }
+
+    #ranking{
+        margin-top:14px;
+        background:white;
+        padding:12px 18px;
+        border-radius:16px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.1);
+        color:#005577;
+        width:min(85vw, 280px);
+        text-align:left;
+    }
+
+    #ranking h2{
+        margin:0 0 8px 0;
+        font-size:20px;
+        text-align:center;
+        color:#0077aa;
+    }
+
+    #ranking ol{
+        margin:0;
+        padding-left:25px;
+    }
+
+    #ranking li{
+        margin:6px 0;
+        font-size:18px;
+    }
 </style>
 </head>
 
@@ -121,6 +149,15 @@
 <div id="clearMessage">🎉 クリア！ 🎉</div>
 
 <button onclick="startGame()">もう一回</button>
+
+<div id="ranking">
+    <h2>🏆 ベストタイム</h2>
+    <ol id="rankingList">
+        <li>--- 秒</li>
+        <li>--- 秒</li>
+        <li>--- 秒</li>
+    </ol>
+</div>
 
 <!-- 正解音 -->
 <audio id="successSound" src="jyan.mp3" preload="auto"></audio>
@@ -142,6 +179,7 @@ const board = document.getElementById("board");
 const timerDisplay = document.getElementById("timer");
 const clearMessage = document.getElementById("clearMessage");
 const successSound = document.getElementById("successSound");
+const rankingList = document.getElementById("rankingList");
 
 function shuffle(array){
     for(let i = array.length - 1; i > 0; i--){
@@ -151,6 +189,7 @@ function shuffle(array){
 }
 
 function startTimer(){
+
     clearInterval(timerInterval);
 
     timer = 0;
@@ -224,6 +263,8 @@ function checkMatch(){
 
             clearInterval(timerInterval);
 
+            updateRanking(timer);
+
             setTimeout(() => {
                 clearMessage.style.display = "block";
             }, 300);
@@ -245,6 +286,42 @@ function checkMatch(){
     }
 }
 
+function updateRanking(newTime){
+
+    let rankings = JSON.parse(localStorage.getItem("animalMemoryRanking")) || [];
+
+    rankings.push(newTime);
+
+    rankings.sort((a, b) => a - b);
+
+    rankings = rankings.slice(0, 3);
+
+    localStorage.setItem("animalMemoryRanking", JSON.stringify(rankings));
+
+    displayRanking();
+}
+
+function displayRanking(){
+
+    let rankings = JSON.parse(localStorage.getItem("animalMemoryRanking")) || [];
+
+    rankingList.innerHTML = "";
+
+    for(let i = 0; i < 3; i++){
+
+        const li = document.createElement("li");
+
+        if(rankings[i] !== undefined){
+            li.textContent = rankings[i] + " 秒";
+        }else{
+            li.textContent = "--- 秒";
+        }
+
+        rankingList.appendChild(li);
+    }
+}
+
+displayRanking();
 startGame();
 </script>
 
