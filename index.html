@@ -6,119 +6,162 @@
 <title>からだ神経衰弱ゲーム</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 6px;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffe6f0, #e0f7ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* タイトル */
+h1 {
+  margin: 4px 0;
+  color: #ff4f8b;
+  font-size: clamp(18px, 3vw, 32px);
+}
+
+/* タイマー */
+#timer {
+  font-size: clamp(16px, 2.5vw, 26px);
+  font-weight: bold;
+  color: #ff2d74;
+  margin: 2px 0;
+}
+
+/* メッセージ */
+#message {
+  font-size: clamp(14px, 2vw, 22px);
+  color: #ff4f8b;
+  font-weight: bold;
+  text-align: center;
+  min-height: 28px;
+}
+
+/* ボタン */
+button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #ff4f8b;
+  color: white;
+  font-size: clamp(12px, 2vw, 16px);
+  cursor: pointer;
+  margin: 4px 0;
+}
+
+button:hover {
+  background: #ff2d74;
+}
+
+/* ゲーム全体 */
+#game {
+  width: min(95vw, 900px);
+  height: calc(100vh - 150px);
+
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+
+  align-content: center;
+}
+
+/* カード */
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .inner {
+  transform: rotateY(180deg);
+}
+
+.front,
+.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  backface-visibility: hidden;
+
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.front {
+  background: white;
+  transform: rotateY(180deg);
+}
+
+.back {
+  background: #ff7fb0;
+  color: white;
+}
+
+/* 絵文字 */
+.emoji {
+  font-size: clamp(20px, 3vw, 42px);
+}
+
+/* ラベル */
+.label {
+  margin-top: 2px;
+  color: #555;
+  font-size: clamp(9px, 1.2vw, 16px);
+}
+
+/* スマホ用 */
+@media (max-width: 700px) {
+
   body {
-    margin: 0;
-    font-family: "Arial", sans-serif;
-    background: linear-gradient(135deg, #ffe6f0, #e0f7ff);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  h1 {
-    margin-top: 20px;
-    color: #ff4f8b;
-  }
-
-  #timer {
-    font-size: 28px;
-    font-weight: bold;
-    color: #ff2d74;
-    margin-top: 10px;
+    padding: 4px;
   }
 
   #game {
-    width: 900px;
-    max-width: 95vw;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    margin: 20px;
+    width: 98vw;
+    height: calc(100vh - 140px);
+
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
   }
 
-  .card {
-    aspect-ratio: 1 / 1;
-    position: relative;
-    cursor: pointer;
-    perspective: 300px;
+  .emoji {
+    font-size: 24px;
   }
 
-  .inner {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    transition: transform 0.5s;
-    transform-style: preserve-3d;
-  }
-
-  .card.flipped .inner {
-    transform: rotateY(180deg);
+  .label {
+    font-size: 10px;
   }
 
   .front,
   .back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backface-visibility: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-radius: 10px;
   }
-
-  .front {
-    background: white;
-    transform: rotateY(180deg);
-    flex-direction: column;
-    font-size: 48px;
-  }
-
-  .back {
-    background: #ff7fb0;
-    color: white;
-    font-size: 42px;
-  }
-
-  .label {
-    font-size: 18px;
-    margin-top: 6px;
-    color: #555;
-  }
-
-  #message {
-    font-size: 24px;
-    color: #ff4f8b;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-
-  button {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 12px;
-    background: #ff4f8b;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 12px;
-  }
-
-  button:hover {
-    background: #ff2d74;
-  }
-
-  @media (max-width: 700px) {
-    #game {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .front {
-      font-size: 40px;
-    }
-  }
+}
 </style>
 </head>
 
@@ -128,7 +171,9 @@
 
 <div id="timer">⏰ 0 秒</div>
 
-<button onclick="startGame()">シャッフルして再スタート</button>
+<button onclick="startGame()">
+  シャッフルして再スタート
+</button>
 
 <div id="message"></div>
 
@@ -143,8 +188,6 @@ const organs = [
   { emoji: "🫘", name: "腎臓" },
   { emoji: "🌀", name: "大腸" },
   { emoji: "🍖", name: "肝臓" },
-
-  // 追加
   { emoji: "👃", name: "鼻" },
   { emoji: "✋", name: "手" },
   { emoji: "🦶", name: "足" },
@@ -160,30 +203,39 @@ let matchedCount = 0;
 let seconds = 0;
 let timerInterval = null;
 
+/* シャッフル */
 function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
+/* タイマー開始 */
 function startTimer() {
+
   clearInterval(timerInterval);
 
   seconds = 0;
+
   document.getElementById("timer").textContent =
     `⏰ ${seconds} 秒`;
 
   timerInterval = setInterval(() => {
+
     seconds++;
 
     document.getElementById("timer").textContent =
       `⏰ ${seconds} 秒`;
+
   }, 1000);
 }
 
+/* タイマー停止 */
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
+/* ゲーム開始 */
 function startGame() {
+
   const game = document.getElementById("game");
   const message = document.getElementById("message");
 
@@ -201,19 +253,23 @@ function startGame() {
   cards.forEach((item) => {
 
     const card = document.createElement("div");
+
     card.className = "card";
+
     card.dataset.name = item.name;
 
     card.innerHTML = `
       <div class="inner">
+
         <div class="front">
-          <div>${item.emoji}</div>
+          <div class="emoji">${item.emoji}</div>
           <div class="label">${item.name}</div>
         </div>
 
         <div class="back">
-          ❓
+          <div class="emoji">❓</div>
         </div>
+
       </div>
     `;
 
@@ -223,6 +279,7 @@ function startGame() {
   });
 }
 
+/* カードをめくる */
 function flipCard(card) {
 
   if (
@@ -240,6 +297,7 @@ function flipCard(card) {
   }
 }
 
+/* 一致判定 */
 function checkMatch() {
 
   lock = true;
@@ -251,6 +309,7 @@ function checkMatch() {
     matchedCount++;
 
     flipped = [];
+
     lock = false;
 
     if (matchedCount === organs.length) {
@@ -269,9 +328,10 @@ function checkMatch() {
       b.classList.remove("flipped");
 
       flipped = [];
+
       lock = false;
 
-    }, 1000);
+    }, 800);
   }
 }
 
