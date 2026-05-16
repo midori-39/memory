@@ -3,163 +3,158 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>からだ神経衰弱ゲーム</title>
+<title>どうぶつ神経衰弱ゲーム</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
 }
 
-body {
-  margin: 0;
-  padding: 6px;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #ffe6f0, #e0f7ff);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(180deg,#dff6ff,#bfefff);
+  color:#036;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  padding:6px;
 }
 
 /* タイトル */
-h1 {
-  margin: 4px 0;
-  color: #ff4f8b;
-  font-size: clamp(18px, 3vw, 32px);
+h1{
+  margin:4px 0;
+  font-size:clamp(20px,3vw,34px);
+  color:#0088cc;
 }
 
 /* タイマー */
-#timer {
-  font-size: clamp(16px, 2.5vw, 26px);
-  font-weight: bold;
-  color: #ff2d74;
-  margin: 2px 0;
-}
-
-/* メッセージ */
-#message {
-  font-size: clamp(14px, 2vw, 22px);
-  color: #ff4f8b;
-  font-weight: bold;
-  text-align: center;
-  min-height: 28px;
+#timer{
+  font-size:clamp(16px,2vw,24px);
+  font-weight:bold;
+  margin:4px 0;
+  color:#006fa6;
 }
 
 /* ボタン */
-button {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 10px;
-  background: #ff4f8b;
-  color: white;
-  font-size: clamp(12px, 2vw, 16px);
-  cursor: pointer;
-  margin: 4px 0;
+button{
+  background:#4fc3f7;
+  border:none;
+  color:white;
+  padding:7px 14px;
+  border-radius:10px;
+  font-size:clamp(12px,2vw,16px);
+  cursor:pointer;
+  margin-bottom:6px;
 }
 
-button:hover {
-  background: #ff2d74;
+button:hover{
+  background:#29b6f6;
 }
 
-/* ゲーム全体 */
-#game {
-  width: min(95vw, 900px);
-  height: calc(100vh - 150px);
+/* メッセージ */
+#message{
+  height:28px;
+  font-size:clamp(14px,2vw,22px);
+  font-weight:bold;
+  color:#0077aa;
+  margin-bottom:4px;
+}
 
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+/* ゲーム盤 */
+#game{
+  width:min(92vw,820px);
+  height:calc(100vh - 150px);
 
-  align-content: center;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+
+  align-content:center;
 }
 
 /* カード */
-.card {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  perspective: 1000px;
-  cursor: pointer;
+.card{
+  aspect-ratio:1/1;
+  position:relative;
+  perspective:1000px;
+  cursor:pointer;
 }
 
-.inner {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  transition: transform 0.5s;
-  transform-style: preserve-3d;
+/* 内側 */
+.inner{
+  width:100%;
+  height:100%;
+  position:absolute;
+  transition:transform .45s;
+  transform-style:preserve-3d;
 }
 
-.card.flipped .inner {
-  transform: rotateY(180deg);
+.card.flipped .inner{
+  transform:rotateY(180deg);
 }
 
+/* 表裏 */
 .front,
-.back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
+.back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:12px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 
-  backface-visibility: hidden;
+  backface-visibility:hidden;
 
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
-.front {
-  background: white;
-  transform: rotateY(180deg);
+/* 表 */
+.front{
+  background:white;
+  transform:rotateY(180deg);
 }
 
-.back {
-  background: #ff7fb0;
-  color: white;
+/* 裏 */
+.back{
+  background:#81d4fa;
+  color:white;
 }
 
 /* 絵文字 */
-.emoji {
-  font-size: clamp(20px, 3vw, 42px);
+.emoji{
+  font-size:clamp(20px,3vw,40px);
 }
 
-/* ラベル */
-.label {
-  margin-top: 2px;
-  color: #555;
-  font-size: clamp(9px, 1.2vw, 16px);
+/* 名前 */
+.label{
+  margin-top:2px;
+  font-size:clamp(9px,1.2vw,15px);
+  color:#555;
 }
 
-/* スマホ用 */
-@media (max-width: 700px) {
+/* スマホ */
+@media(max-width:700px){
 
-  body {
-    padding: 4px;
+  #game{
+    width:96vw;
+    height:calc(100vh - 145px);
+
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
   }
 
-  #game {
-    width: 98vw;
-    height: calc(100vh - 140px);
-
-    grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
+  .emoji{
+    font-size:24px;
   }
 
-  .emoji {
-    font-size: 24px;
-  }
-
-  .label {
-    font-size: 10px;
-  }
-
-  .front,
-  .back {
-    border-radius: 10px;
+  .label{
+    font-size:10px;
   }
 }
 </style>
@@ -167,7 +162,7 @@ button:hover {
 
 <body>
 
-<h1>🩺 からだ神経衰弱ゲーム</h1>
+<h1>🐾 どうぶつ神経衰弱</h1>
 
 <div id="timer">⏰ 0 秒</div>
 
@@ -180,19 +175,20 @@ button:hover {
 <div id="game"></div>
 
 <script>
-const organs = [
-  { emoji: "👁️", name: "目" },
-  { emoji: "🧠", name: "脳" },
-  { emoji: "😋", name: "胃" },
-  { emoji: "🫀", name: "心臓" },
-  { emoji: "🫘", name: "腎臓" },
-  { emoji: "🌀", name: "大腸" },
-  { emoji: "🍖", name: "肝臓" },
-  { emoji: "👃", name: "鼻" },
-  { emoji: "✋", name: "手" },
-  { emoji: "🦶", name: "足" },
-  { emoji: "👂", name: "耳" },
-  { emoji: "👄", name: "口" }
+const animals = [
+
+  { emoji:"🐶", name:"いぬ" },
+  { emoji:"🐱", name:"ねこ" },
+  { emoji:"🐰", name:"うさぎ" },
+  { emoji:"🐻", name:"くま" },
+  { emoji:"🦁", name:"ライオン" },
+
+  { emoji:"🐼", name:"パンダ" },
+  { emoji:"🦊", name:"きつね" },
+  { emoji:"🐵", name:"さる" },
+  { emoji:"🐯", name:"とら" },
+  { emoji:"🐨", name:"コアラ" }
+
 ];
 
 let cards = [];
@@ -204,43 +200,48 @@ let seconds = 0;
 let timerInterval = null;
 
 /* シャッフル */
-function shuffle(array) {
+function shuffle(array){
   return array.sort(() => Math.random() - 0.5);
 }
 
 /* タイマー開始 */
-function startTimer() {
+function startTimer(){
 
   clearInterval(timerInterval);
 
   seconds = 0;
 
-  document.getElementById("timer").textContent =
-    `⏰ ${seconds} 秒`;
+  updateTimer();
 
   timerInterval = setInterval(() => {
 
     seconds++;
 
-    document.getElementById("timer").textContent =
-      `⏰ ${seconds} 秒`;
+    updateTimer();
 
-  }, 1000);
+  },1000);
+}
+
+/* タイマー表示 */
+function updateTimer(){
+
+  document.getElementById("timer").textContent =
+    `⏰ ${seconds} 秒`;
 }
 
 /* タイマー停止 */
-function stopTimer() {
+function stopTimer(){
   clearInterval(timerInterval);
 }
 
 /* ゲーム開始 */
-function startGame() {
+function startGame(){
 
   const game = document.getElementById("game");
-  const message = document.getElementById("message");
 
   game.innerHTML = "";
-  message.textContent = "";
+
+  document.getElementById("message").textContent = "";
 
   matchedCount = 0;
   flipped = [];
@@ -248,7 +249,7 @@ function startGame() {
 
   startTimer();
 
-  cards = shuffle([...organs, ...organs]);
+  cards = shuffle([...animals, ...animals]);
 
   cards.forEach((item) => {
 
@@ -259,6 +260,7 @@ function startGame() {
     card.dataset.name = item.name;
 
     card.innerHTML = `
+
       <div class="inner">
 
         <div class="front">
@@ -267,7 +269,7 @@ function startGame() {
         </div>
 
         <div class="back">
-          <div class="emoji">❓</div>
+
         </div>
 
       </div>
@@ -280,9 +282,9 @@ function startGame() {
 }
 
 /* カードをめくる */
-function flipCard(card) {
+function flipCard(card){
 
-  if (
+  if(
     lock ||
     card.classList.contains("flipped") ||
     flipped.length >= 2
@@ -292,19 +294,19 @@ function flipCard(card) {
 
   flipped.push(card);
 
-  if (flipped.length === 2) {
+  if(flipped.length === 2){
     checkMatch();
   }
 }
 
-/* 一致判定 */
-function checkMatch() {
+/* 一致チェック */
+function checkMatch(){
 
   lock = true;
 
-  const [a, b] = flipped;
+  const [a,b] = flipped;
 
-  if (a.dataset.name === b.dataset.name) {
+  if(a.dataset.name === b.dataset.name){
 
     matchedCount++;
 
@@ -312,15 +314,15 @@ function checkMatch() {
 
     lock = false;
 
-    if (matchedCount === organs.length) {
+    if(matchedCount === animals.length){
 
       stopTimer();
 
       document.getElementById("message").textContent =
-        `🎉 全部そろった！タイム：${seconds} 秒`;
+        `🎉 クリア！ ${seconds} 秒`;
     }
 
-  } else {
+  }else{
 
     setTimeout(() => {
 
@@ -331,7 +333,7 @@ function checkMatch() {
 
       lock = false;
 
-    }, 800);
+    },700);
   }
 }
 
